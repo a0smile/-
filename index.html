@@ -12,6 +12,14 @@
 </head>
 <body>
 
+  <!-- ===== شريط الإعلانات المتحرك ===== -->
+  <div class="announcement-bar" id="announcementBar">
+    <div class="announcement-track">
+      <span class="announcement-text" id="announcementText"></span>
+      <span class="announcement-text" id="announcementText2"></span>
+    </div>
+  </div>
+
   <!-- ===== Header ===== -->
   <header class="header" id="header">
     <nav class="nav container">
@@ -45,13 +53,27 @@
         <span class="shape shape-2"></span>
         <span class="shape shape-3"></span>
       </div>
-      <div class="container hero-content">
-        <span class="hero-badge" id="heroBadge"></span>
-        <h2 class="hero-title" id="heroTitle"></h2>
-        <p class="hero-subtitle" id="heroSubtitle"></p>
-        <div class="hero-buttons">
-          <a href="#booking" class="btn btn-primary" id="heroBtnMain"></a>
-          <a href="#services" class="btn btn-outline" id="heroBtnSecondary"></a>
+      <div class="container hero-wrapper">
+        <div class="hero-content">
+          <span class="hero-badge" id="heroBadge"></span>
+          <h2 class="hero-title" id="heroTitle"></h2>
+          <p class="hero-subtitle" id="heroSubtitle"></p>
+          <div class="hero-buttons">
+            <a href="#booking" class="btn btn-primary" id="heroBtnMain"></a>
+            <a href="#services" class="btn btn-outline" id="heroBtnSecondary"></a>
+          </div>
+        </div>
+        <div class="hero-image-side">
+          <div class="hero-image-frame" id="heroImageFrame">
+            <div class="hero-image-placeholder" id="heroImagePlaceholder">
+              <span class="hero-image-icon">📸</span>
+              <p>أضف صورتك هنا من content.json</p>
+              <p class="hero-image-hint">ضع رابط الصورة في خانة image</p>
+            </div>
+            <img id="heroImage" class="hero-image" alt="" style="display:none;">
+          </div>
+          <div class="hero-image-decor decor-1"></div>
+          <div class="hero-image-decor decor-2"></div>
         </div>
       </div>
     </section>
@@ -61,20 +83,40 @@
       <div class="container stats-grid" id="statsGrid"></div>
     </section>
 
-    <!-- ===== Services ===== -->
+    <!-- ===== Services & Prices ===== -->
     <section class="section" id="services">
       <div class="container">
         <div class="section-head">
           <span class="section-badge">خدماتنا</span>
-          <h2 class="section-title">كل ما تحتاجه ابتسامتك</h2>
-          <p class="section-subtitle">خدمات شاملة من التنظيف حتى الزراعة بأحدث التقنيات</p>
+          <h2 class="section-title">خدماتنا وأسعارنا</h2>
+          <p class="section-subtitle">هذه جميع خدمات المجمع مع الأسعار — اضغط زر الواتساب بجانب أي خدمة للحجز أو الاستفسار عنها مباشرة</p>
         </div>
-        <div class="services-grid" id="servicesGrid"></div>
+        <div class="price-note reveal">
+          <span class="price-note-icon">ℹ️</span>
+          <p>جميع الأسعار <strong>متغيرة يومياً</strong> — للتحقق من السعر الحقيقي والعروض الحالية، تابعونا على مواقع التواصل الاجتماعي أو راسلونا عبر الواتساب وسنرد عليكم فوراً</p>
+        </div>
+        <div class="price-list" id="servicesGrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== Tips ===== -->
+    <section class="section section-alt" id="tips">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">💡 نصائح طبية</span>
+          <h2 class="section-title">نصائح للحفاظ على أسنانك</h2>
+          <p class="section-subtitle">نصائح من أطبائنا لصحة فم وأسنان أفضل</p>
+        </div>
+        <div class="daily-tips-box reveal">
+          <h3>📌 نصائح يومية لأسنان أفضل</h3>
+          <ul class="daily-tips-list" id="dailyTipsList"></ul>
+        </div>
+        <div class="tips-grid" id="tipsGrid"></div>
       </div>
     </section>
 
     <!-- ===== Why Us ===== -->
-    <section class="section section-alt" id="features">
+    <section class="section" id="features">
       <div class="container">
         <div class="section-head">
           <span class="section-badge">لماذا نحن؟</span>
@@ -118,6 +160,19 @@
           <p class="section-subtitle">تجارب حقيقية من زبائننا الأعزاء</p>
         </div>
         <div class="testimonials-grid" id="testimonialsGrid"></div>
+        <div class="add-review-box reveal">
+          <h3>✍️ شاركنا تجربتك</h3>
+          <p>رأيك يهمنا! اكتب تعليقك وسنضيفه بعد مراجعته من إدارة المجمع.</p>
+          <form id="reviewForm" class="review-form">
+            <div class="form-group">
+              <input type="text" id="reviewName" placeholder="اسمك الكريم" required>
+            </div>
+            <div class="form-group">
+              <textarea id="reviewText" placeholder="اكتب تعليقك هنا..." rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">إرسال التعليق عبر واتساب</button>
+          </form>
+        </div>
       </div>
     </section>
 

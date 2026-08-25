@@ -22,7 +22,16 @@ function setText(id, text) {
 }
 
 function renderSite(data) {
-  const { clinic, hero, stats, services, features, offers, doctors, testimonials, workingHours, bookingServices, booking } = data;
+  const { clinic, announcement, hero, stats, services, tips, features, offers, doctors, testimonials, workingHours, bookingServices, booking } = data;
+
+  // ===== شريط الإعلانات =====
+  if (announcement) {
+    document.getElementById('announcementText').textContent = announcement;
+    document.getElementById('announcementText2').textContent = announcement;
+  } else {
+    document.getElementById('announcementBar').style.display = 'none';
+    document.getElementById('header').style.top = '0';
+  }
 
   // ===== الهوية والترويسة =====
   document.title = clinic.name;
@@ -40,6 +49,14 @@ function renderSite(data) {
   setText('heroBtnMain', hero.buttonMain);
   setText('heroBtnSecondary', hero.buttonSecondary);
 
+  // ===== صورة الـ Hero =====
+  if (hero.image) {
+    const img = document.getElementById('heroImage');
+    img.src = hero.image;
+    img.style.display = 'block';
+    document.getElementById('heroImagePlaceholder').style.display = 'none';
+  }
+
   // ===== الأرقام =====
   const statsGrid = document.getElementById('statsGrid');
   statsGrid.innerHTML = stats.map(s => `
@@ -49,13 +66,40 @@ function renderSite(data) {
     </div>
   `).join('');
 
-  // ===== الخدمات =====
+  // ===== الخدمات والأسعار =====
   const servicesGrid = document.getElementById('servicesGrid');
-  servicesGrid.innerHTML = services.map(s => `
-    <div class="service-card reveal">
-      <div class="service-icon">${s.icon}</div>
-      <h3>${s.title}</h3>
-      <p>${s.description}</p>
+  servicesGrid.innerHTML = (data.serviceCategories || []).map(cat => `
+    <div class="price-category reveal">
+      <h3 class="price-cat-title">${cat.icon} ${cat.title}</h3>
+      <ul class="price-items">
+        ${cat.items.map(item => {
+          const waMsg = encodeURIComponent(`مرحباً، أرغب بالاستفسار عن خدمة: ${item.name}`);
+          return `<li class="price-item">
+            <span class="price-item-name">${item.name}</span>
+            <span class="price-item-prices">
+              ${item.oldPrice ? `<span class="price-old">${item.oldPrice} ريال</span>` : ''}
+              <span class="price-now">${item.price} ريال</span>
+            </span>
+            <a class="price-wa-btn" href="https://wa.me/${clinic.whatsapp}?text=${waMsg}" target="_blank" rel="noopener">💬 اطلبها</a>
+          </li>`;
+        }).join('')}
+      </ul>
+    </div>
+  `).join('');
+
+  // ===== نصائح يومية =====
+  const dailyTipsList = document.getElementById('dailyTipsList');
+  dailyTipsList.innerHTML = (data.dailyTips || []).map((tip, i) => `
+    <li><span class="daily-tip-num">${i + 1}</span>${tip}</li>
+  `).join('');
+
+  // ===== نصائح =====
+  const tipsGrid = document.getElementById('tipsGrid');
+  tipsGrid.innerHTML = tips.map(t => `
+    <div class="tip-card reveal">
+      <div class="tip-icon">${t.icon}</div>
+      <h3>${t.title}</h3>
+      <p>${t.description}</p>
     </div>
   `).join('');
 
@@ -181,6 +225,26 @@ document.getElementById('bookingForm').addEventListener('submit', function (e) {
 
   const waUrl = `https://wa.me/${siteData.clinic.whatsapp}?text=${encodeURIComponent(message)}`;
   window.open(waUrl, '_blank');
+});
+
+// ===== نموذج إضافة تعليق → واتساب =====
+document.getElementById('reviewForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  if (!siteData) return;
+
+  const name = document.getElementById('reviewName').value.trim();
+  const text = document.getElementById('reviewText').value.trim();
+
+  let message = `⭐ تعليق جديد من موقع المجمع\n\n`;
+  message += `👤 الاسم: ${name}\n`;
+  message += `💬 التعليق: ${text}\n`;
+
+  const waUrl = `https://wa.me/${siteData.clinic.whatsapp}?text=${encodeURIComponent(message)}`;
+  window.open(waUrl, '_blank');
+
+  document.getElementById('reviewName').value = '';
+  document.getElementById('reviewText').value = '';
+  alert('شكراً لك! تم إرسال تعليقك، وسيظهر بعد المراجعة.');
 });
 
 // ===== قائمة الجوال =====

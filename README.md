@@ -1,6 +1,6 @@
 <div align="center">
 
-![Smile Care Banner](./banner.png)
+<img src="./logo.png" width="180" alt="Smile Care Logo">
 
 # 🦷 مجمع عناية الابتسامة الطبي
 ### Smile Care Medical Complex

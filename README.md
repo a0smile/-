@@ -1,9 +1,9 @@
 <div align="center">
 
-<img src="https://cdn-icons-png.flaticon.com/512/2967/2967406.png" width="150" alt="Smile Care Logo">
+<img src="./IMG_0317.jpeg" width="180" alt="Smile Care Logo">
 
-# 🦷 مجمع عناية الابتسامة الطبي
-### Smile Care Medical Complex
+<h1 style="color:#0096FF; margin-bottom:0;">🦷 مجمع عناية الابتسامة الطبي</h1>
+<h3 style="color:#0096FF; margin-top:5px;">Smile Care Medical Complex</h3>
 
 <sub>ابتسامتك.. هي سر ثقتك، ونحن هنا لنحافظ عليها</sub>
 
@@ -12,7 +12,7 @@
 <sub>مقدمة | Introduction</sub>
 
 <p>
-أهلاً وسهلاً بكم في <b>مجمع عناية الابتسامة الطبي</b> بحفر الباطن<br>
+أهلاً وسهلاً بكم في <b style="color:#0096FF;">مجمع عناية الابتسامة الطبي</b> بحفر الباطن<br>
 المجمع الرائد في طب وجراحة الفم والأسنان<br>
 نحن لا نعالج الأسنان فقط، بل نصنع ثقة تدوم مع كل ابتسامة
 </p>
@@ -56,8 +56,8 @@
 
 ### 📄 الترخيص والحقوق
 
-<sub>هذا المشروع مملوك بالكامل لـ <b>مجمع عناية الابتسامة الطبي</b></sub><br>
-<sub>© 2026 جميع الحقوق محفوظة</sub><br>
-<sub>Made with ❤️ in Hafr Al-Batin</sub>
+<sub>هذا المشروع مملوك بالكامل لـ <b style="color:#0096FF;">مجمع عناية الابتسامة الطبي</b></sub><br>
+<sub>© 2026 جميع الحقوق محفوظة لمجمع عناية الابتسامة الطبي</sub><br>
+<sub>Made with ❤️ in Hafr Al-Batin | تطوير وتصميم خاص بالمجمع</sub>
 
 </div>

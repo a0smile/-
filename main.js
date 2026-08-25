@@ -172,7 +172,10 @@ function renderSite(data) {
   emailEl.innerHTML = `بريد: <a href="mailto:${clinic.email}">${clinic.email}</a>`;
   document.getElementById('mapBtn').href = clinic.mapUrl;
   setText('footerAddress', clinic.address);
-  setText('footerPhone', clinic.phone);
+  const footerPhoneEl = document.getElementById('footerPhone');
+  footerPhoneEl.innerHTML = `جوال: <a href="tel:${clinic.phone}">${clinic.phone}</a>`;
+  const footerEmailEl = document.getElementById('footerEmail');
+  footerEmailEl.innerHTML = `بريد: <a href="mailto:${clinic.email}">${clinic.email}</a>`;
 
   // ===== أوقات الدوام =====
   const hoursList = document.getElementById('hoursList');

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="مجمع عناية الابتسامة الطبي لطب وجراحة الأسنان - خدمات الأسنان بأحدث التقنيات وبأفضل الأسعار">
+  <title>مجمع عناية الابتسامة الطبي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="header" id="header">
+    <nav class="nav container">
+      <div class="logo">
+        <span class="logo-icon">🦷</span>
+        <div class="logo-text">
+          <h1 id="logoName">مجمع الابتسامة</h1>
+          <p id="logoTagline">لطب وجراحة الأسنان</p>
+        </div>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hero">الرئيسية</a></li>
+        <li><a href="#services">الخدمات</a></li>
+        <li><a href="#offers">العروض</a></li>
+        <li><a href="#doctors">الأطباء</a></li>
+        <li><a href="#booking">الحجز</a></li>
+        <li><a href="#contact">تواصل</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="#booking" class="btn btn-primary btn-sm">احجز موعدك</a>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="القائمة">☰</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero" id="hero">
+      <div class="hero-bg-shapes">
+        <span class="shape shape-1"></span>
+        <span class="shape shape-2"></span>
+        <span class="shape shape-3"></span>
+      </div>
+      <div class="container hero-content">
+        <span class="hero-badge" id="heroBadge"></span>
+        <h2 class="hero-title" id="heroTitle"></h2>
+        <p class="hero-subtitle" id="heroSubtitle"></p>
+        <div class="hero-buttons">
+          <a href="#booking" class="btn btn-primary" id="heroBtnMain"></a>
+          <a href="#services" class="btn btn-outline" id="heroBtnSecondary"></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Stats ===== -->
+    <section class="stats" id="stats">
+      <div class="container stats-grid" id="statsGrid"></div>
+    </section>
+
+    <!-- ===== Services ===== -->
+    <section class="section" id="services">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">خدماتنا</span>
+          <h2 class="section-title">كل ما تحتاجه ابتسامتك</h2>
+          <p class="section-subtitle">خدمات شاملة من التنظيف حتى الزراعة بأحدث التقنيات</p>
+        </div>
+        <div class="services-grid" id="servicesGrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== Why Us ===== -->
+    <section class="section section-alt" id="features">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">لماذا نحن؟</span>
+          <h2 class="section-title">مجمع عناية الابتسامة</h2>
+          <p class="section-subtitle">معايير تجعلنا الخيار الأول للعائلة</p>
+        </div>
+        <div class="features-grid" id="featuresGrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== Offers ===== -->
+    <section class="section" id="offers">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">🔥 عروض خاصة</span>
+          <h2 class="section-title" id="offersTitle">عروضنا الخاصة</h2>
+          <p class="section-subtitle" id="offersSubtitle"></p>
+        </div>
+        <div class="offers-grid" id="offersGrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== Doctors ===== -->
+    <section class="section section-alt" id="doctors">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">فريقنا الطبي</span>
+          <h2 class="section-title">أطباؤنا</h2>
+          <p class="section-subtitle">نخبة من الأطباء المرخصين من الهيئة السعودية للتخصصات الصحية</p>
+        </div>
+        <div class="doctors-grid" id="doctorsGrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== Testimonials ===== -->
+    <section class="section" id="testimonials">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">آراء مراجعينا</span>
+          <h2 class="section-title">ابتسامات سعيدة</h2>
+          <p class="section-subtitle">تجارب حقيقية من زبائننا الأعزاء</p>
+        </div>
+        <div class="testimonials-grid" id="testimonialsGrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== Booking ===== -->
+    <section class="section section-booking" id="booking">
+      <div class="container">
+        <div class="booking-card fade-in">
+          <div class="booking-info">
+            <h2 class="section-title" id="bookingTitle">احجز موعدك</h2>
+            <p id="bookingSubtitle"></p>
+            <div class="booking-support">
+              <span class="check-icon">✔️</span> يتواصل معك موظف الاستقبال خلال دقائق من إرسال الطلب
+            </div>
+            <div class="booking-support">
+              <span class="check-icon">✔️</span> الاستشارة والتقييم الأولي مجانيان
+            </div>
+          </div>
+          <form class="booking-form" id="bookingForm">
+            <div class="form-group">
+              <label for="name">الاسم الكامل</label>
+              <input type="text" id="name" placeholder="ادخل اسمك" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">رقم الجوال</label>
+              <input type="tel" id="phone" placeholder="05xxxxxxxx" required>
+            </div>
+            <div class="form-group">
+              <label for="service">الخدمة المطلوبة</label>
+              <select id="service" required></select>
+            </div>
+            <div class="form-group">
+              <label for="date">اليوم المفضل (اختياري)</label>
+              <input type="date" id="date">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="submitBtn">إرسال عبر واتساب</button>
+            <p class="form-note">📨 سيتم تحويل بياناتك إلى رسالة واتساب جاهزة، فقط اضغط إرسال</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Contact / Hours ===== -->
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-badge">تواصل معنا</span>
+          <h2 class="section-title">موقعنا وأوقات الدوام</h2>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-card">
+            <h3>📍 العنوان</h3>
+            <p id="contactAddress"></p>
+            <a href="#" class="btn btn-outline btn-sm" id="mapBtn" target="_blank">الاتجاهات عبر خرائط Google</a>
+          </div>
+          <div class="contact-card">
+            <h3>📞 التواصل</h3>
+            <p id="contactPhone"></p>
+            <p id="contactEmail"></p>
+          </div>
+          <div class="contact-card">
+            <h3>🕐 أوقات الدوام</h3>
+            <ul class="hours-list" id="hoursList"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-icon">🦷</span>
+          <div class="logo-text">
+            <h2 id="footerName"></h2>
+            <p id="footerTagline"></p>
+          </div>
+        </div>
+        <p class="footer-desc">نخدمكم بأحدث تقنيات طب الأسنان وخبرة سنوات لنمنحكم ابتسامة تدوم.</p>
+        <div class="social-links" id="socialLinks"></div>
+      </div>
+      <div class="footer-links-block">
+        <h4>روابط سريعة</h4>
+        <ul>
+          <li><a href="#services">الخدمات</a></li>
+          <li><a href="#doctors">الأطباء</a></li>
+          <li><a href="#offers">العروض</a></li>
+          <li><a href="#booking">الحجز</a></li>
+        </ul>
+      </div>
+      <div class="footer-links-block">
+        <h4>تواصل</h4>
+        <ul>
+          <li id="footerAddress"></li>
+          <li id="footerPhone"></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© <span id="currentYear"></span> <span id="footerNameBottom"></span> — جميع الحقوق محفوظة.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Floating WhatsApp ===== -->
+  <a href="#" class="whatsapp-float" id="whatsappFloat" target="_blank" aria-label="تواصل عبر واتساب">
+    <span class="whatsapp-ping"></span>
+    <span class="whatsapp-icon">💬</span>
+  </a>
+
+  <script src="main.js"></script>
+</body>
+</html>

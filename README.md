@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./logo.png" width="180" alt="Smile Care Logo">
+<img src="https://cdn-icons-png.flaticon.com/512/2967/2967406.png" width="150" alt="Smile Care Logo">
 
 # 🦷 مجمع عناية الابتسامة الطبي
 ### Smile Care Medical Complex

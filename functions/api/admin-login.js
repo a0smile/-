@@ -1,4 +1,4 @@
-export async function onRequest(request) {
+export async function onRequest(context) {
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
@@ -6,15 +6,20 @@ export async function onRequest(request) {
     'Access-Control-Allow-Headers': 'Content-Type'
   };
 
-  if (request.method === 'OPTIONS') {
+  // معالجة طلبات OPTIONS (يفتح الاتصال بين المتصفح والخادم)
+  if (context.request.method === 'OPTIONS') {
     return new Response('', { status: 204, headers });
   }
 
-  if (request.method !== 'POST') {
+  // نقبل طلبات POST فقط (إرسال كلمة المرور)
+  if (context.request.method !== 'POST') {
     return new Response(JSON.stringify({ ok: false }), { status: 405, headers });
   }
 
-  const stored = request.env.ADMIN_PASSWORD || '';
+  // نقرأ كلمة المرور الصحيحة من متغير Cloudflare السري (ليست في أي ملف)
+  const stored = context.env.ADMIN_PASSWORD || '';
+
+  // لو المتغير غير مضبوط في Cloudflare، نُخبر بأنه غير مُهيّأ
   if (!stored) {
     return new Response(JSON.stringify({ ok: false, message: 'not configured' }), {
       status: 500,
@@ -23,9 +28,11 @@ export async function onRequest(request) {
   }
 
   try {
-    const body = await request.json();
+    // نقرأ ما أرسله المتصفح ونقارنه بكلمة المرور الحقيقية
+    const body = await context.request.json();
     const submitted = body && typeof body.code === 'string' ? body.code : '';
     const ok = submitted === stored;
+
     return new Response(JSON.stringify({ ok }), {
       status: ok ? 200 : 401,
       headers

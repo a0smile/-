@@ -27,13 +27,10 @@ function saveCatalogShape(index, shape) {
   localStorage.setItem(CATALOG_SHAPE_KEY, JSON.stringify(shapes));
 }
 
-const shapeStyle = (index) => getCatalogShapes()[index] || '';
-
 function renderCatalog() {
   const grid = document.getElementById('catalogGrid');
   const items = getCatalogItems();
 
-  // العناوين
   const sd = window.getSiteData && window.getSiteData();
   const cat = (sd && sd.catalog) || {};
   document.getElementById('catalogTitle').textContent = cat.title || 'معرض خدماتنا';
@@ -43,7 +40,7 @@ function renderCatalog() {
     grid.innerHTML = `<div class="catalog-empty">
       <div class="catalog-placeholder-icon">🖼️</div>
       <p>لا توجد صور في المعرض بعد.</p>
-      <p style="font-size:.9rem;color:#90a;margin-top:6px;">في وضع المالك أضف صورك من زر "＋ إضافة صورة".</p>
+      <p style="font-size:.9rem;color:#999;margin-top:6px;">في وضع المالك أضف صورك من زر "＋ إضافة صورة".</p>
     </div>`;
     return;
   }
@@ -79,8 +76,6 @@ function renderCatalog() {
       const ph = document.createElement('div');
       ph.className = 'catalog-placeholder';
       ph.innerHTML = `<div class="catalog-placeholder-icon">🖼️</div><p>الصورة ${i+1}</p>`;
-      ph.dataset.edit = `catalog.items.${i}.src`;
-      ph.dataset.editType = 'image';
       imgWrap.appendChild(ph);
     }
 
@@ -96,43 +91,41 @@ function renderCatalog() {
     grid.appendChild(card);
   });
 
-  // ربط أزرار الأدوات (تعمل فقط في وضع المالك)
-  if (window.adminActive) {
-    grid.querySelectorAll('.catalog-tools button').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const idx = +btn.dataset.index;
-        const action = btn.dataset.action;
-        const items = getCatalogItems();
-        const item = items[idx];
-        if (!item) return;
+  // ربط أزرار الأدوات — تُربط دائمًا، وظهورها يتحكم به CSS عبر body.admin-mode
+  grid.querySelectorAll('.catalog-tools button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!window.adminActive) { alert('فعّل وضع المالك أولاً 🔐'); return; }
+      const idx = +btn.dataset.index;
+      const action = btn.dataset.action;
+      const items = getCatalogItems();
+      const item = items[idx];
+      if (!item) return;
 
-        if (action === 'del') {
-          if (!confirm('هل تريد حذف هذه الصورة من المعرض؟')) return;
-          items.splice(idx, 1);
-          saveCatalogItems(items);
-          renderCatalog();
-          showCatalogToast('🗑️ تم حذف الصورة');
-        } else if (action === 'img') {
-          changeCatalogImage(idx);
-        } else if (action === 'shape') {
-          const cur = getCatalogShapes()[idx];
-          const next = cur === 'circle' ? 'round' : 'square';
-          saveCatalogShape(idx, next);
-          renderCatalog();
-          showCatalogToast('⬠ تم تغيير شكل الصورة');
-        } else if (action === 'size') {
-          const w = prompt('نسبة العرض بالنسبة المئوية (40-100):', '100');
-          if (w && !isNaN(+w)) {
-            const grid = document.getElementById('catalogGrid');
-            const cards = grid.querySelectorAll('.catalog-item');
-            if (cards[idx]) cards[idx].style.width = (+w) + '%';
-          }
+      if (action === 'del') {
+        if (!confirm('هل تريد حذف هذه الصورة من المعرض؟')) return;
+        items.splice(idx, 1);
+        saveCatalogItems(items);
+        renderCatalog();
+        showCatalogToast('🗑️ تم حذف الصورة');
+      } else if (action === 'img') {
+        changeCatalogImage(idx);
+      } else if (action === 'shape') {
+        const cur = getCatalogShapes()[idx];
+        const next = cur === 'circle' ? 'round' : 'square';
+        saveCatalogShape(idx, next);
+        renderCatalog();
+        showCatalogToast('⬠ تم تغيير شكل الصورة');
+      } else if (action === 'size') {
+        const w = prompt('نسبة العرض بالنسبة المئوية (40-100):', '100');
+        if (w && !isNaN(+w)) {
+          const cards = grid.querySelectorAll('.catalog-item');
+          if (cards[idx]) cards[idx].style.width = (+w) + '%';
         }
-      });
+      }
     });
-  }
+  });
 }
 
 let pendingCatalogImageIndex = null;
@@ -142,7 +135,6 @@ function changeCatalogImage(idx) {
   pickCatalogImage();
 }
 
-/* فتح نافذة اختيار الصورة */
 function pickCatalogImage() {
   const input = document.getElementById('catalogFileInput');
   input.value = '';
@@ -193,21 +185,16 @@ function showCatalogToast(msg) {
   setTimeout(() => t.classList.remove('show'), 1400);
 }
 
-/* أزرار علوية */
 document.getElementById('catalogBackBtn').addEventListener('click', () => { location.href = 'index.html'; });
 
-/* ===== مشاركة الأمان مع وضع المالك ===== */
-/* نتأكد أن adminActive مشترك عبر النافذة */
 window.catalogNeedsAdmin = true;
 
-/* الاستماع لجلسة المالك */
-document.addEventListener('siteRendered', () => {
+/* إعادة العرض عند تفعيل وضع المالك أو تحديث الجلسة */
+document.addEventListener('adminModeChanged', () => {
   if (window.adminActive) renderCatalog();
 });
 
-/* تحميل عند فتح الصفحة */
 window.addEventListener('DOMContentLoaded', () => {
-  // العنوان
   const _sd = window.getSiteData && window.getSiteData();
   document.title = (_sd && _sd.clinic && _sd.clinic.name ? _sd.clinic.name : 'المجمع') + ' — المعرض';
   renderCatalog();

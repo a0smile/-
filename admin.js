@@ -10,19 +10,33 @@ const ADMIN_SESSION_KEY = 'smile_admin_active';
 
 let adminActive = false;
 
-/* كود الدخول: عدّله من content.json (خانة adminPassword) أو القيمة الافتراضية */
-function getAdminPassword() {
-  const data = window.getSiteData ? window.getSiteData() : null;
-  return (data && data.adminPassword) || 'admin123';
+/* كود الدخول: يُتحقق منه من جهة الخادم (Cloudflare Pages Function)
+   كلمة المرور محفوظة في المتغير البيئي ADMIN_PASSWORD بموقع Cloudflare
+   ولا توجد في أي ملف من ملفات الموقع، فتبقى سرية عن الزوار */
+async function verifyAdminCode(code) {
+  try {
+    const res = await fetch('/api/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data && data.ok === true;
+  } catch (e) {
+    console.error('تعذر التحقق من كود المالك', e);
+    return false;
+  }
 }
 
 /* ===== الدخول / الخروج ===== */
-function enterAdminMode() {
+async function enterAdminMode() {
   if (adminActive) return;
   const code = prompt('🔐 أدخل كود المالك لتفعيل وضع التعديل:');
   if (code === null) return;
 
-  if (code !== getAdminPassword()) {
+  const ok = await verifyAdminCode(code);
+  if (!ok) {
     alert('❌ الكود غير صحيح. فقط مالك الموقع يستطيع التعديل.');
     return;
   }

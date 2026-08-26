@@ -1,19 +1,9 @@
-/* ============================================
-   وضع مالك الموقع — أزرار التعديل
-   تعمل الأزرار فقط بعد إدخال كود الدخول
-   التعديلات تُحفظ في localStorage وتُطبق فور العرض
-   زر التحميل ينتج نسخة content.json كاملة بالتعديلات
-   ============================================ */
-
 const ADMIN_SESSION_KEY = 'smile_admin_active';
-/* OVERRIDES_KEY معرّف في main.js — متاح هنا عبر النطاق العام */
-
-/* متغير عام (var) ليتشارك مع صفحات الموقع الأخرى مثل الكتالوج */
 var adminActive = false;
+window.adminActive = false;
 
 /* كود الدخول: يُتحقق منه من جهة الخادم (Cloudflare Pages Function)
-   كلمة المرور محفوظة في المتغير البيئي ADMIN_PASSWORD بموقع Cloudflare
-   ولا توجد في أي ملف من ملفات الموقع، فتبقى سرية عن الزوار */
+   كلمة المرور محفوظة في المتغير البيئي ADMIN_PASSWORD بموقع Cloudflare */
 async function verifyAdminCode(code) {
   try {
     const res = await fetch('/api/admin-login', {
@@ -30,7 +20,6 @@ async function verifyAdminCode(code) {
   }
 }
 
-/* ===== الدخول / الخروج ===== */
 async function enterAdminMode() {
   if (adminActive) return;
   const code = prompt('🔐 أدخل كود المالك لتفعيل وضع التعديل:');
@@ -43,21 +32,31 @@ async function enterAdminMode() {
   }
 
   adminActive = true;
+  window.adminActive = true;
   sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
   document.body.classList.add('admin-mode');
-  document.getElementById('adminToolbar').hidden = false;
+  const tb = document.getElementById('adminToolbar');
+  if (tb) tb.hidden = false;
   attachEditButtons();
+  if (typeof renderCatalog === 'function') renderCatalog();
+  notifyAdminChanged();
 }
 
 function exitAdminMode() {
   adminActive = false;
+  window.adminActive = false;
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
   document.body.classList.remove('admin-mode');
-  document.getElementById('adminToolbar').hidden = true;
+  const tb = document.getElementById('adminToolbar');
+  if (tb) tb.hidden = true;
   removeEditButtons();
+  notifyAdminChanged();
 }
 
-/* ===== أزرار التعديل بجانب العناصر ===== */
+function notifyAdminChanged() {
+  document.dispatchEvent(new CustomEvent('adminModeChanged'));
+}
+
 function attachEditButtons() {
   removeEditButtons();
   document.querySelectorAll('[data-edit]').forEach(el => {
@@ -75,25 +74,19 @@ function attachEditButtons() {
       el.appendChild(btn);
     } else {
       el.parentElement.appendChild(btn);
-      moveButtonNearElement(el, btn);
+      const parent = el.parentElement;
+      if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
+      btn.style.position = 'absolute';
+      btn.style.top = '-12px';
+      btn.style.left = '-4px';
     }
   });
-}
-
-function moveButtonNearElement(el, btn) {
-  btn.style.position = 'absolute';
-  btn.style.top = '-12px';
-  btn.style.left = '-4px';
-  const parent = el.parentElement;
-  if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
-  parent.appendChild(btn);
 }
 
 function removeEditButtons() {
   document.querySelectorAll('.edit-btn').forEach(b => b.remove());
 }
 
-/* ===== تنفيذ التعديل ===== */
 function handleEdit(el) {
   const path = el.dataset.edit;
   const type = el.dataset.editType;
@@ -129,7 +122,6 @@ function handleEdit(el) {
   showSavedToast();
 }
 
-/* إشعار حفظ صغير أسفل الشاشة */
 function showSavedToast() {
   let toast = document.getElementById('smileToast');
   if (!toast) {
@@ -143,32 +135,36 @@ function showSavedToast() {
 }
 
 /* ===== رفع الصور ===== */
+/* adminFileInput موجود في الصفحة الرئيسية فقط؛ إن لم يوجد (صفحة الكتالوج)
+   نُهيّئ هذا الجزء بأمان دون إيقاف بقية admin.js */
 const fileInput = document.getElementById('adminFileInput');
 let pendingImagePath = null;
 
 function openImageUploader(path) {
   pendingImagePath = path;
+  if (!fileInput) return;
   fileInput.value = '';
   fileInput.click();
 }
 
-fileInput.addEventListener('change', () => {
-  const file = fileInput.files && fileInput.files[0];
-  if (!file || !pendingImagePath) return;
-  if (!file.type.startsWith('image/')) {
-    alert('❌ الرجاء اختيار ملف صورة صحيح.');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = () => {
-    window.saveOverride(pendingImagePath, reader.result);
-    pendingImagePath = null;
-    rerender();
-  };
-  reader.readAsDataURL(file);
-});
+if (fileInput) {
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file || !pendingImagePath) return;
+    if (!file.type.startsWith('image/')) {
+      alert('❌ الرجاء اختيار ملف صورة صحيح.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      window.saveOverride(pendingImagePath, reader.result);
+      pendingImagePath = null;
+      rerender();
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
-/* ===== إعادة العرض بعد التعديل ===== */
 function rerender() {
   const data = window.getSiteData();
   if (!data) return;
@@ -179,7 +175,6 @@ function rerender() {
   if (adminActive) attachEditButtons();
 }
 
-/* ===== تحميل content.json بالتعديلات ===== */
 function downloadUpdatedJson() {
   const data = window.getSiteData();
   if (!data) return;
@@ -192,14 +187,12 @@ function downloadUpdatedJson() {
   alert('✅ تم تحميل content.json بالتعديلات.\nارفعها على استضافتك حتى تظهر للزوار كلهم.');
 }
 
-/* ===== التراجع عن كل التعديلات ===== */
 function resetOverrides() {
   if (!confirm('هل تريد التراجع عن كل التعديلات المحفوظة في هذا المتصفح؟')) return;
   localStorage.removeItem(OVERRIDES_KEY);
   location.reload();
 }
 
-/* ===== ربط الأزرار ===== */
 const entryBtnEl = document.getElementById('adminEntryBtn');
 const exitBtnEl = document.getElementById('adminExitBtn');
 const downloadBtnEl = document.getElementById('adminDownloadBtn');
@@ -213,8 +206,11 @@ if (resetBtnEl) resetBtnEl.addEventListener('click', resetOverrides);
 /* ===== استعادة الجلسة ===== */
 if (sessionStorage.getItem(ADMIN_SESSION_KEY) === '1') {
   adminActive = true;
+  window.adminActive = true;
   document.body.classList.add('admin-mode');
-  document.getElementById('adminToolbar').hidden = false;
+  const tb = document.getElementById('adminToolbar');
+  if (tb) tb.hidden = false;
+  if (typeof renderCatalog === 'function') renderCatalog();
 }
 
 document.addEventListener('siteRendered', () => {

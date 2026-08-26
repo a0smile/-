@@ -422,61 +422,67 @@ window.getSiteData = () => siteData;
 window.getOverrideValue = (path) => getDeep(siteData || {}, path);
 
 // ===== نموذج الحجز → واتساب =====
-document.getElementById('bookingForm').addEventListener('submit', function (e) {
-  e.preventDefault();
-  if (!siteData) return;
+  const bookingFormEl = document.getElementById('bookingForm');
+  if (bookingFormEl) bookingFormEl.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!siteData) return;
 
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const service = document.getElementById('service').value;
-  const date = document.getElementById('date').value;
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const service = document.getElementById('service').value;
+    const date = document.getElementById('date').value;
 
-  let message = `🦷 طلب حجز موعد جديد\n\n`;
-  message += `👤 الاسم: ${name}\n`;
-  message += `📱 الجوال: ${phone}\n`;
-  message += `🩺 الخدمة: ${service}\n`;
-  if (date) message += `📅 اليوم المفضل: ${date}\n`;
+    let message = `🦷 طلب حجز موعد جديد\n\n`;
+    message += `👤 الاسم: ${name}\n`;
+    message += `📱 الجوال: ${phone}\n`;
+    message += `🩺 الخدمة: ${service}\n`;
+    if (date) message += `📅 اليوم المفضل: ${date}\n`;
 
-  const waUrl = `https://wa.me/${siteData.clinic.whatsapp}?text=${encodeURIComponent(message)}`;
-  window.open(waUrl, '_blank');
-});
+    const waUrl = `https://wa.me/${siteData.clinic.whatsapp}?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, '_blank');
+  });
 
 // ===== نموذج إضافة تعليق → واتساب =====
-document.getElementById('reviewForm').addEventListener('submit', function (e) {
-  e.preventDefault();
-  if (!siteData) return;
+  const reviewFormEl = document.getElementById('reviewForm');
+  if (reviewFormEl) reviewFormEl.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!siteData) return;
 
-  const name = document.getElementById('reviewName').value.trim();
-  const text = document.getElementById('reviewText').value.trim();
+    const name = document.getElementById('reviewName').value.trim();
+    const text = document.getElementById('reviewText').value.trim();
 
-  let message = `⭐ تعليق جديد من موقع المجمع\n\n`;
-  message += `👤 الاسم: ${name}\n`;
-  message += `💬 التعليق: ${text}\n`;
+    let message = `⭐ تعليق جديد من موقع المجمع\n\n`;
+    message += `👤 الاسم: ${name}\n`;
+    message += `💬 التعليق: ${text}\n`;
 
-  const waUrl = `https://wa.me/${siteData.clinic.whatsapp}?text=${encodeURIComponent(message)}`;
-  window.open(waUrl, '_blank');
+    const waUrl = `https://wa.me/${siteData.clinic.whatsapp}?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, '_blank');
 
-  document.getElementById('reviewName').value = '';
-  document.getElementById('reviewText').value = '';
-  alert('شكراً لك! تم إرسال تعليقك، وسيظهر بعد المراجعة.');
-});
+    document.getElementById('reviewName').value = '';
+    document.getElementById('reviewText').value = '';
+    alert('شكراً لك! تم إرسال تعليقك، وسيظهر بعد المراجعة.');
+  });
 
 // ===== قائمة الجوال =====
 const menuToggle = document.getElementById('menuToggle');
 const navLinks = document.getElementById('navLinks');
-
-menuToggle.addEventListener('click', () => {
-  navLinks.classList.toggle('open');
-});
+if (menuToggle && navLinks) {
+  menuToggle.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
 
 navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => navLinks.classList.remove('open'));
-});
+    link.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+}
 
 // ===== ظل الترويسة عند التمرير =====
-window.addEventListener('scroll', () => {
-  document.getElementById('header').classList.toggle('scrolled', window.scrollY > 30);
-});
+const headerEl = document.getElementById('header');
+if (headerEl) {
+  window.addEventListener('scroll', () => {
+    headerEl.classList.toggle('scrolled', window.scrollY > 30);
+  });
+}
 
 // ===== ظهور العناصر عند التمرير =====
 function initScrollReveal() {

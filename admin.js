@@ -8,7 +8,8 @@
 const ADMIN_SESSION_KEY = 'smile_admin_active';
 /* OVERRIDES_KEY معرّف في main.js — متاح هنا عبر النطاق العام */
 
-let adminActive = false;
+/* متغير عام (var) ليتشارك مع صفحات الموقع الأخرى مثل الكتالوج */
+var adminActive = false;
 
 /* كود الدخول: يُتحقق منه من جهة الخادم (Cloudflare Pages Function)
    كلمة المرور محفوظة في المتغير البيئي ADMIN_PASSWORD بموقع Cloudflare
@@ -199,10 +200,15 @@ function resetOverrides() {
 }
 
 /* ===== ربط الأزرار ===== */
-document.getElementById('adminEntryBtn').addEventListener('click', enterAdminMode);
-document.getElementById('adminExitBtn').addEventListener('click', exitAdminMode);
-document.getElementById('adminDownloadBtn').addEventListener('click', downloadUpdatedJson);
-document.getElementById('adminResetBtn').addEventListener('click', resetOverrides);
+const entryBtnEl = document.getElementById('adminEntryBtn');
+const exitBtnEl = document.getElementById('adminExitBtn');
+const downloadBtnEl = document.getElementById('adminDownloadBtn');
+const resetBtnEl = document.getElementById('adminResetBtn');
+
+if (entryBtnEl) entryBtnEl.addEventListener('click', enterAdminMode);
+if (exitBtnEl) exitBtnEl.addEventListener('click', exitAdminMode);
+if (downloadBtnEl) downloadBtnEl.addEventListener('click', downloadUpdatedJson);
+if (resetBtnEl) resetBtnEl.addEventListener('click', resetOverrides);
 
 /* ===== استعادة الجلسة ===== */
 if (sessionStorage.getItem(ADMIN_SESSION_KEY) === '1') {

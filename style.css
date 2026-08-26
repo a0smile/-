@@ -1036,7 +1036,7 @@ ul {
   display: flex;
   gap: 80px;
   white-space: nowrap;
-  animation: marquee 40s linear infinite;
+  animation: marquee 32.5s linear infinite;
 }
 
 .announcement-text {
@@ -1050,6 +1050,11 @@ ul {
 @keyframes marquee {
   from { transform: translateX(-50%); }
   to { transform: translateX(0); }
+}
+
+/* إيقاف مؤقت عند مرور الماوس لقراءة الرسالة كاملة */
+.announcement-bar:hover .announcement-track {
+  animation-play-state: paused;
 }
 
 /* ===== Hero Image ===== */
@@ -1499,3 +1504,154 @@ ul {
     flex-wrap: wrap;
   }
 }
+
+/* ===== مربعا صور الهيرو جنباً إلى جنب ===== */
+.hero-images-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  width: 100%;
+}
+
+.hero-images-grid .hero-image-frame {
+  max-width: 100%;
+}
+
+.hero-images-grid .hero-image-frame:nth-child(2) {
+  animation: floatImage 7s ease-in-out infinite reverse;
+}
+
+@media (max-width: 640px) {
+  .hero-images-grid {
+    gap: 10px;
+  }
+  .hero-images-grid .hero-image-placeholder {
+    padding: 12px;
+  }
+  .hero-images-grid .hero-image-placeholder p {
+    font-size: 0.8rem;
+  }
+  .hero-images-grid .hero-image-hint {
+    display: none;
+  }
+  .hero-images-grid .hero-image-icon img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ===== زر دخول المالك (رمز قفل صغير أسفل الصفحة) ===== */
+.admin-entry-btn {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  z-index: 500;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: #1f2937;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.45;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+.admin-entry-btn:hover {
+  opacity: 1;
+  transform: scale(1.08);
+}
+body.admin-mode .admin-entry-btn {
+  opacity: 1;
+  background: var(--primary, #0d9488);
+}
+
+/* ===== شريط أدوات المالك ===== */
+.admin-toolbar {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #1f2937;
+  color: #fff;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+.admin-toolbar[hidden] {
+  display: none;
+}
+.admin-toolbar-title {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+.admin-btn {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.admin-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===== أزرار التعديل (تظهر فقط في وضع المالك) ===== */
+.edit-btn {
+  position: absolute;
+  top: -10px;
+  left: -6px;
+  z-index: 400;
+  border: none;
+  background: #f59e0b;
+  color: #1f2937;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 9px;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+}
+.edit-btn:hover {
+  background: #fbbf24;
+  transform: scale(1.08);
+}
+
+/* زر تعديل الشريط المتحرك: ثابت أعلى الشاشة */
+.announcement-bar .edit-btn {
+  position: fixed;
+  top: 3px;
+  left: 8px;
+  z-index: 700;
+}
+
+body.admin-mode [data-edit] {
+  outline: 2px dashed rgba(245, 158, 11, 0.7);
+  outline-offset: 3px;
+}
+body.admin-mode .announcement-bar[data-edit] {
+  outline-offset: -2px;
+}
+body:not(.admin-mode) .edit-btn {
+  display: none;
+}
+
+/* تباعد أسفل الصفحة عند فتح شريط المالك حتى لا يغطي المحتوى */
+body.admin-mode {
+  padding-bottom: 70px;
+}
+

@@ -1,9 +1,10 @@
-const CACHE_NAME = 'smile-care-v2';
+const CACHE_NAME = 'smile-care-v4';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './main.js',
+  './admin.js',
   './content.json',
   './manifest.json',
   './icon.svg',
@@ -29,20 +30,14 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  // content.json: network-first so updates appear quickly; others: cache-first
-  if (event.request.url.includes('content.json')) {
-    event.respondWith(
-      fetch(event.request)
-        .then((res) => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          return res;
-        })
-        .catch(() => caches.match(event.request))
-    );
-    return;
-  }
+  // ملفات الموقع: الشبكة أولاً حتى تظهر التحديثات فوراً، والكاش احتياط عند انقطاع الاتصال
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    fetch(event.request)
+      .then((res) => {
+        const clone = res.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        return res;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

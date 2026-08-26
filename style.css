@@ -1036,7 +1036,7 @@ ul {
   display: flex;
   gap: 80px;
   white-space: nowrap;
-  animation: marquee 32.5s linear infinite;
+  animation: marquee 18s linear infinite;
 }
 
 .announcement-text {
@@ -1654,4 +1654,27 @@ body:not(.admin-mode) .edit-btn {
 body.admin-mode {
   padding-bottom: 70px;
 }
+
+/* إشعار الحفظ هنا */
+#smileToast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  left: 24px;
+  margin: 0 auto;
+  width: fit-content;
+  max-width: 90vw;
+  background: #16a34a;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 10px 22px;
+  border-radius: 30px;
+  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1200;
+}
+#smileToast.show { opacity: 1; }
 

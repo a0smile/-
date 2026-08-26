@@ -90,14 +90,41 @@ function handleEdit(el) {
   }
 
   const current = window.getOverrideValue(path);
+
+  if (type === 'list') {
+    const arr = Array.isArray(current) ? current : [];
+    const value = prompt(`✏️ تعديل: ${label}\n\nكل بند في سطر مستقل:\n(احذف سطراً لحذف البند وأضف سطراً لإضافة بند)`, arr.join('\n'));
+    if (value === null) return;
+    const items = value.split(/[\n,،]/).map(s => s.trim()).filter(Boolean);
+    window.saveOverride(path, items);
+    rerender();
+    showSavedToast();
+    return;
+  }
+
   const value = prompt(`✏️ تعديل: ${label}\n\nالقيمة الحالية:`, current != null ? String(current) : '');
   if (value === null) return;
 
   let finalValue = value;
   if (value === 'true' || value === 'false') finalValue = value === 'true';
+  else if (/^\d+$/.test(value)) finalValue = Number(value);
   window.saveOverride(path, finalValue);
 
   rerender();
+  showSavedToast();
+}
+
+/* إشعار حفظ صغير أسفل الشاشة */
+function showSavedToast() {
+  let toast = document.getElementById('smileToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'smileToast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = '✅ تم حفظ التعديل';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1400);
 }
 
 /* ===== رفع الصور ===== */

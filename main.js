@@ -58,19 +58,98 @@ function editAttr(path) {
   return ` data-edit="${path}" data-edit-type="text"`;
 }
 
+/* ربط حقل بالمسار المناسب لتعديله في وضع المالك */
+function markEditable(id, path) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.setAttribute('data-edit', path);
+  el.setAttribute('data-edit-type', 'text');
+}
+
 /* كل قسم يُعرض داخل try/catch حتى لا يتوقف بقية الموقع عند أي خلل */
 function safeRender(name, fn) {
   try { fn(); }
   catch (e) { console.error('خطأ أثناء عرض قسم: ' + name, e); }
 }
 
+/* حركة عدّاد الأرقام عند ظهورها (تعمل مع أي رقم يبدو أوله رقما مثل "12+" أو "98%") */
+function animateCounters() {
+  const els = document.querySelectorAll('.count-up:not(.counted)');
+  if (!els.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      io.unobserve(entry.target);
+      entry.target.classList.add('counted');
+      const raw = String(entry.target.dataset.target || '');
+      const match = raw.match(/^(\d+)([\s\S]*)$/);
+      if (!match) { entry.target.textContent = raw; return; }
+      const end = +match[1];
+      const suffix = match[2];
+      const dur = 1300;
+      const t0 = performance.now();
+      const tick = (now) => {
+        const p = Math.min((now - t0) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        entry.target.textContent = Math.round(end * eased) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  }, { threshold: 0.35 });
+  els.forEach((el) => io.observe(el));
+}
+
 function renderSite(data) {
   const { clinic, hero, offers, booking } = data;
+  const sections = data.sections || {};
   const testimonials = data.testimonials || data.reviews || [];
   const workingHours = data.workingHours || [];
   const bookingServices = data.bookingServices || [];
 
   document.title = clinic.name || document.title;
+
+  /* ===== نصوص الأقسام الثابتة: كلها قابلة للتعديل ===== */
+  safeRender('sections', () => {
+    const pairs = [
+      ['servicesBadge', 'sections.servicesBadge'],
+      ['servicesTitle', 'sections.servicesTitle'],
+      ['servicesSubtitle', 'sections.servicesSubtitle'],
+      ['tipsBadge', 'sections.tipsBadge'],
+      ['tipsTitle', 'sections.tipsTitle'],
+      ['tipsSubtitle', 'sections.tipsSubtitle'],
+      ['dailyTipsTitle', 'sections.dailyTipsTitle'],
+      ['featuresBadge', 'sections.featuresBadge'],
+      ['featuresTitle', 'sections.featuresTitle'],
+      ['featuresSubtitle', 'sections.featuresSubtitle'],
+      ['offersBadge', 'sections.offersBadge'],
+      ['doctorsBadge', 'sections.doctorsBadge'],
+      ['doctorsTitle', 'sections.doctorsTitle'],
+      ['doctorsSubtitle', 'sections.doctorsSubtitle'],
+      ['reviewsBadge', 'sections.reviewsBadge'],
+      ['reviewsTitle', 'sections.reviewsTitle'],
+      ['reviewsSubtitle', 'sections.reviewsSubtitle'],
+      ['reviewBoxTitle', 'sections.reviewBoxTitle'],
+      ['reviewBoxText', 'sections.reviewBoxText'],
+      ['reviewSubmitBtn', 'sections.reviewButton'],
+      ['contactBadge', 'sections.contactBadge'],
+      ['contactTitle', 'sections.contactTitle'],
+      ['formNote', 'sections.formNote'],
+      ['support1', 'sections.support1'],
+      ['support2', 'sections.support2'],
+      ['footerDesc', 'sections.footerDesc']
+    ];
+    pairs.forEach(([id, path]) => {
+      setText(id, getDeep(sections, path.split('.').slice(1).join('.')));
+      markEditable(id, path);
+    });
+    /* ملاحظة الأسعار تحتمل وسماً <strong> داخلياً */
+    const noteEl = document.getElementById('servicesNote');
+    if (noteEl) {
+      noteEl.innerHTML = sections.servicesNote || '';
+      markEditable('servicesNote', 'sections.servicesNote');
+    }
+  });
 
   safeRender('announcement', () => {
     if (data.announcement) {
@@ -95,6 +174,10 @@ function renderSite(data) {
     setText('footerNameBottom', clinic.name);
     document.getElementById('logoName').setAttribute('data-edit', 'clinic.name');
     document.getElementById('logoTagline').setAttribute('data-edit', 'clinic.tagline');
+    markEditable('logoName', 'clinic.name');
+    markEditable('logoTagline', 'clinic.tagline');
+    markEditable('footerName', 'clinic.name');
+    markEditable('footerTagline', 'clinic.tagline');
   });
 
   safeRender('hero', () => {
@@ -111,6 +194,9 @@ function renderSite(data) {
     });
     heroTitle.setAttribute('data-edit', 'hero.title');
     heroTitle.setAttribute('data-edit-type', 'text');
+    markEditable('heroTitle', 'hero.title');
+    heroTitle.innerHTML = `${hero.title || ''} <span class="highlight" id="heroTitleHighlight">${hero.titleHighlight || ''}</span>`;
+    markEditable('heroTitleHighlight', 'hero.titleHighlight');
   });
 
   safeRender('heroImages', () => {
@@ -135,17 +221,18 @@ function renderSite(data) {
     const statsGrid = document.getElementById('statsGrid');
     statsGrid.innerHTML = (data.stats || []).map((s, i) => `
       <div class="stat-item reveal">
-        <div class="stat-number"${editAttr(`stats.${i}.number`)}>${s.number}</div>
+        <div class="stat-number count-up" data-target="${s.number}"${editAttr(`stats.${i}.number`)}>${s.number}</div>
         <div class="stat-label"${editAttr(`stats.${i}.label`)}>${s.label}</div>
       </div>
     `).join('');
+    animateCounters();
   });
 
   safeRender('services', () => {
     const servicesGrid = document.getElementById('servicesGrid');
     servicesGrid.innerHTML = (data.serviceCategories || []).map((cat, ci) => `
       <div class="price-category reveal">
-        <h3 class="price-cat-title">${cat.icon} ${cat.title}</h3>
+        <h3 class="price-cat-title"><span${editAttr(`serviceCategories.${ci}.icon`)}>${cat.icon}</span> <span${editAttr(`serviceCategories.${ci}.title`)}>${cat.title}</span></h3>
         <ul class="price-items">
           ${cat.items.map((item, ii) => {
             const waMsg = encodeURIComponent(`مرحباً، أرغب بالاستفسار عن خدمة: ${item.name}`);
@@ -153,7 +240,7 @@ function renderSite(data) {
             return `<li class="price-item">
               <span class="price-item-name"${editAttr(base + '.name')}>${item.name}</span>
               <span class="price-item-prices">
-                ${item.oldPrice ? `<span class="price-old">${item.oldPrice} ريال</span>` : ''}
+                <span class="price-old"${editAttr(base + '.oldPrice')}>${item.oldPrice ? item.oldPrice + ' ريال' : ''}</span>
                 <span class="price-now"${editAttr(base + '.price')}>${item.price} ريال</span>
               </span>
               <a class="price-wa-btn" href="https://wa.me/${clinic.whatsapp}?text=${waMsg}" target="_blank" rel="noopener">💬 اطلبها</a>
@@ -175,7 +262,7 @@ function renderSite(data) {
     const tipsGrid = document.getElementById('tipsGrid');
     tipsGrid.innerHTML = (data.tips || []).map((t, i) => `
       <div class="tip-card reveal">
-        <div class="tip-icon">${t.icon}</div>
+        <div class="tip-icon"${editAttr(`tips.${i}.icon`)}>${t.icon}</div>
         <h3${editAttr(`tips.${i}.title`)}>${t.title}</h3>
         <p${editAttr(`tips.${i}.description`)}>${t.description}</p>
       </div>
@@ -186,7 +273,7 @@ function renderSite(data) {
     const featuresGrid = document.getElementById('featuresGrid');
     featuresGrid.innerHTML = (data.features || []).map((f, i) => `
       <div class="feature-card reveal">
-        <div class="feature-icon">${f.icon}</div>
+        <div class="feature-icon"${editAttr(`features.${i}.icon`)}>${f.icon}</div>
         <div>
           <h3${editAttr(`features.${i}.title`)}>${f.title}</h3>
           <p${editAttr(`features.${i}.description`)}>${f.description}</p>
@@ -197,14 +284,22 @@ function renderSite(data) {
 
   safeRender('offers', () => {
     const offersSection = document.getElementById('offers');
+    /* زر تفعيل/إخفاء قسم العروض (اكتب true أو false) */
+    if (offersSection) {
+      offersSection.setAttribute('data-edit', 'offers.enabled');
+      offersSection.setAttribute('data-edit-type', 'text');
+      offersSection.setAttribute('data-edit-label', 'تفعيل قسم العروض (اكتب true أو false)');
+    }
     if (offers && offers.enabled && (offers.items || []).length > 0) {
       setText('offersTitle', offers.title);
       setText('offersSubtitle', offers.subtitle);
+      markEditable('offersTitle', 'offers.title');
+      markEditable('offersSubtitle', 'offers.subtitle');
       const offersGrid = document.getElementById('offersGrid');
       offersGrid.innerHTML = offers.items.map((o, i) => `
         <div class="offer-card reveal">
           <span class="offer-note"${editAttr(`offers.items.${i}.note`)}>${o.note || ''}</span>
-          <div class="offer-icon">${o.icon}</div>
+          <div class="offer-icon"${editAttr(`offers.items.${i}.icon`)}>${o.icon}</div>
           <h3${editAttr(`offers.items.${i}.title`)}>${o.title}</h3>
           <div class="offer-old-price"${editAttr(`offers.items.${i}.oldPrice`)}>${o.oldPrice} ريال</div>
           <div class="offer-price"${editAttr(`offers.items.${i}.price`)}>${o.price}</div>
@@ -220,7 +315,7 @@ function renderSite(data) {
     const doctorsGrid = document.getElementById('doctorsGrid');
     doctorsGrid.innerHTML = (data.doctors || []).map((d, i) => `
       <div class="doctor-card reveal">
-        <div class="doctor-avatar">${d.initial}</div>
+        <div class="doctor-avatar"${editAttr(`doctors.${i}.initial`)}>${d.initial}</div>
         <h3${editAttr(`doctors.${i}.name`)}>${d.name}</h3>
         <p class="doctor-specialty"${editAttr(`doctors.${i}.specialty`)}>${d.specialty}</p>
         <span class="doctor-exp"${editAttr(`doctors.${i}.experience`)}>${d.experience}</span>
@@ -232,7 +327,7 @@ function renderSite(data) {
     const testimonialsGrid = document.getElementById('testimonialsGrid');
     testimonialsGrid.innerHTML = (testimonials || []).map((t, i) => `
       <div class="testimonial-card reveal">
-        <div class="testimonial-stars">${'★'.repeat(t.rating || 5)}</div>
+        <div class="testimonial-stars"${editAttr(`reviews.${i}.rating`)}>${'★'.repeat(t.rating || 5)}</div>
         <p class="testimonial-text"${editAttr(`reviews.${i}.text`)}>"${t.text}"</p>
         <p class="testimonial-name"${editAttr(`reviews.${i}.name`)}>${t.name}</p>
       </div>
@@ -243,25 +338,36 @@ function renderSite(data) {
     setText('bookingTitle', booking ? booking.title : '');
     setText('bookingSubtitle', booking ? booking.subtitle : '');
     setText('submitBtn', booking ? booking.button : '');
+    markEditable('bookingTitle', 'booking.title');
+    markEditable('bookingSubtitle', 'booking.subtitle');
+    markEditable('submitBtn', 'booking.button');
     const serviceSelect = document.getElementById('service');
     serviceSelect.innerHTML = '<option value="">اختر الخدمة</option>' +
       bookingServices.map(s => `<option value="${s}">${s}</option>`).join('');
+    /* قائمة الخدمات داخل الحجز: قابلة للتعديل كنصوص أسطر */
+    serviceSelect.setAttribute('data-edit', 'bookingServices');
+    serviceSelect.setAttribute('data-edit-type', 'list');
+    serviceSelect.setAttribute('data-edit-label', 'قائمة خدمات الحجز (كل خدمة في سطر)');
   });
 
   safeRender('contact', () => {
     setText('contactAddress', clinic.address);
     document.getElementById('contactAddress').setAttribute('data-edit', 'clinic.address');
     const phoneEl = document.getElementById('contactPhone');
-    phoneEl.innerHTML = `جوال: <a href="tel:${clinic.phone}">${clinic.phone}</a>`;
+    phoneEl.innerHTML = `جوال: <a href="tel:${clinic.phone}" data-edit="clinic.phone" data-edit-type="text">${clinic.phone}</a>`;
     const emailEl = document.getElementById('contactEmail');
-    emailEl.innerHTML = `بريد: <a href="mailto:${clinic.email}">${clinic.email}</a>`;
+    emailEl.innerHTML = `بريد: <a href="mailto:${clinic.email}" data-edit="clinic.email" data-edit-type="text">${clinic.email}</a>`;
     const mapBtn = document.getElementById('mapBtn');
     mapBtn.href = clinic.mapUrl || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(clinic.address || ''));
+    mapBtn.setAttribute('data-edit', 'clinic.mapUrl');
+    mapBtn.setAttribute('data-edit-type', 'text');
+    mapBtn.setAttribute('data-edit-label', 'رابط الخريطة');
     setText('footerAddress', clinic.address);
+    markEditable('footerAddress', 'clinic.address');
     const footerPhoneEl = document.getElementById('footerPhone');
-    footerPhoneEl.innerHTML = clinic.phone ? `جوال: <a href="tel:${clinic.phone}">${clinic.phone}</a>` : '';
+    footerPhoneEl.innerHTML = clinic.phone ? `جوال: <a href="tel:${clinic.phone}" data-edit="clinic.phone" data-edit-type="text">${clinic.phone}</a>` : '';
     const footerEmailEl = document.getElementById('footerEmail');
-    footerEmailEl.innerHTML = clinic.email ? `بريد: <a href="mailto:${clinic.email}">${clinic.email}</a>` : '';
+    footerEmailEl.innerHTML = clinic.email ? `بريد: <a href="mailto:${clinic.email}" data-edit="clinic.email" data-edit-type="text">${clinic.email}</a>` : '';
   });
 
   safeRender('workingHours', () => {
@@ -290,8 +396,11 @@ function renderSite(data) {
 
   safeRender('whatsapp', () => {
     const waMessage = encodeURIComponent('مرحباً، أرغب بحجز موعد في ' + clinic.name);
-    document.getElementById('whatsappFloat').href =
-      `https://wa.me/${clinic.whatsapp}?text=${waMessage}`;
+    const floatBtn = document.getElementById('whatsappFloat');
+    floatBtn.href = `https://wa.me/${clinic.whatsapp}?text=${waMessage}`;
+    floatBtn.setAttribute('data-edit', 'clinic.whatsapp');
+    floatBtn.setAttribute('data-edit-type', 'text');
+    floatBtn.setAttribute('data-edit-label', 'رقم الواتساب (مثل 9665xxxxxxxx)');
   });
 
   safeRender('year', () => {

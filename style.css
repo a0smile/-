@@ -1036,8 +1036,8 @@ ul {
   display: flex;
   width: max-content;
   white-space: nowrap;
-  /* تم تعديل الأنيميشن ليعمل بشكل انسيابي دائري ومكرر */
-  animation: marquee 28s linear infinite; 
+  /* ✅ السرعة المعدّلة: من 28s إلى 12s */
+  animation: marquee 12s linear infinite;
 }
 
 .announcement-text {
@@ -1046,17 +1046,17 @@ ul {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  /* تم نقل المسافة إلى اليمين لضبط الفراغ بين الرسالة المكررة */
-  padding-right: 120px; 
+  /* المسافة بين الرسالة المكررة */
+  padding-right: 120px;
 }
 
-/* التعديل السحري للاتجاه والتكرار الدائري المستمر للغة العربية */
+/* حركة دائرية سلسة ومتكررة للاتجاه الصحيح (عربي) */
 @keyframes marquee {
-  0% { 
-    transform: translate3d(0, 0, 0); 
+  0% {
+    transform: translate3d(0, 0, 0);
   }
-  100% { 
-    transform: translate3d(50%, 0, 0); /* جعلنا النسبة موجبة ليتحرك بالاتجاه الصحيح وبشكل دائري مكرر */
+  100% {
+    transform: translate3d(50%, 0, 0); /* 50% = نصف العرض، يعطي تكراراً سلساً تماماً */
   }
 }
 

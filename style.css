@@ -1039,6 +1039,7 @@ ul {
   white-space: nowrap;
   /* ✅ السرعة المعدّلة: من 28s إلى 12s */
   animation: marquee 12s linear infinite;
+  will-change: transform; /* تضمن نعومة الحركة وثبات سرعة الشريط على الجوال والمتصفحات */
 }
 
 .announcement-text {
@@ -1057,7 +1058,7 @@ ul {
     transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(50%, 0, 0); /* 50% = نصف العرض، يعطي تكراراً سلساً تماماً */
+    transform: translate3d(33.33%, 0, 0); /* تم ضبط القيمة البرمجية لضمان تكرار انسيابي كامل بدون قفز أو تقطيع في النص العربي */
   }
 }
 
@@ -1083,6 +1084,7 @@ ul {
   justify-content: center;
   align-items: center;
 }
+
 
 .hero-image-frame {
   position: relative;

@@ -1036,7 +1036,7 @@ ul {
   display: flex;
   width: max-content;
   white-space: nowrap;
-  /* تم زيادة الوقت إلى 28s ليتحرك النص الطويل براحته وتظهر كل الكلمات */
+  /* تم تعديل الأنيميشن ليعمل بشكل انسيابي دائري ومكرر */
   animation: marquee 28s linear infinite; 
 }
 
@@ -1046,21 +1046,24 @@ ul {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  /* استبدلنا الـ gap بـ padding مخصص لتوزيع المسافات بالتساوي ومنع انقطاع النص */
-  padding-left: 120px; 
+  /* تم نقل المسافة إلى اليمين لضبط الفراغ بين الرسالة المكررة */
+  padding-right: 120px; 
 }
 
-/* تعديل مسار الحركة ليمر النص بالكامل بشكل دائري لا ينتهي */
+/* التعديل السحري للاتجاه والتكرار الدائري المستمر للغة العربية */
 @keyframes marquee {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-50%, 0, 0); }
+  0% { 
+    transform: translate3d(0, 0, 0); 
+  }
+  100% { 
+    transform: translate3d(50%, 0, 0); /* جعلنا النسبة موجبة ليتحرك بالاتجاه الصحيح وبشكل دائري مكرر */
+  }
 }
 
 /* إيقاف مؤقت عند مرور الماوس لقراءة الرسالة كاملة */
 .announcement-bar:hover .announcement-track {
   animation-play-state: paused;
 }
-
 /* ===== Hero Image ===== */
 .hero-wrapper {
   display: grid;

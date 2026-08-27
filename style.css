@@ -895,13 +895,14 @@ ul {
 }
 
 /* ===== WhatsApp Float ===== */
+/* زر الواتساب - أكبر وفوق كل شيء */
 .whatsapp-float {
   position: fixed;
   bottom: 26px;
   left: 26px;
-  z-index: 200;
-  width: 62px;
-  height: 62px;
+  z-index: 550;
+  width: 78px;
+  height: 78px;
   border-radius: 50%;
   background: #25d366;
   display: flex;
@@ -916,7 +917,7 @@ ul {
 }
 
 .whatsapp-icon {
-  font-size: 1.7rem;
+  font-size: 2.4rem;
 }
 
 .whatsapp-ping {
@@ -1548,10 +1549,12 @@ ul {
 }
 
 /* ===== زر دخول المالك (رمز قفل صغير أسفل الصفحة) ===== */
+/* زر دخول المالك - انتقل لليمين لا يغطي الواتساب */
 .admin-entry-btn {
   position: fixed;
   bottom: 18px;
-  left: 18px;
+  right: 18px;
+  left: auto;
   z-index: 500;
   width: 44px;
   height: 44px;

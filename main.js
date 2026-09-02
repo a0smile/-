@@ -41,6 +41,29 @@ async function loadContent() {
     let data = await response.json();
     siteData = applyOverrides(data);
     renderSite(siteData);
+
+    // 👇 كود حقيقي ومضمون لعرض الصور تلقائياً لجميع الزوار فور تحميل الصفحة
+    if (siteData) {
+      if (siteData.heroImage1) {
+        const img1 = document.getElementById('heroImage1');
+        const ph1 = document.getElementById('heroImagePlaceholder');
+        if (img1 && ph1) {
+          img1.src = siteData.heroImage1;
+          img1.style.display = 'block';
+          ph1.style.display = 'none';
+        }
+      }
+      if (siteData.heroImage2) {
+        const img2 = document.getElementById('heroImage2');
+        const ph2 = document.getElementById('heroImagePlaceholder2');
+        if (img2 && ph2) {
+          img2.src = siteData.heroImage2;
+          img2.style.display = 'block';
+          ph2.style.display = 'none';
+        }
+      }
+    }
+
     // إشعار وضع المالك بأن العرض اكتمل
     document.dispatchEvent(new CustomEvent('siteRendered'));
   } catch (error) {

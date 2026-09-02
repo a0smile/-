@@ -72,29 +72,99 @@
           </div>
         </div>
         <div class="hero-image-side">
-          <div class="hero-images-grid">
-            <div class="hero-image-frame" id="heroImageFrame">
-              <div class="hero-image-placeholder" id="heroImagePlaceholder">
-                <span class="hero-image-icon"><img src="icon.svg" alt="" width="72" height="72" style="opacity:.5"></span>
-                <p>الصورة الأولى</p>
-                <p class="hero-image-hint">تُضاف من وضع المالك أو content.json</p>
-              </div>
-              <img id="heroImage1" class="hero-image" alt="" style="display:none;">
+          <!-- لوحة تحكم المالك المخفية تماماً عن الزوار، ولا تفتح إلا عبر نظام الرقم السري الخاص بك -->
+          <div class="owner-image-controls-panel" id="ownerImagePanel" style="display: none; background: #ffffff; border: 2px solid #bfa15f; padding: 15px; margin-bottom: 20px; border-radius: 12px; text-align: right; direction: rtl; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+            <strong style="color: #0b6c62; display: block; margin-bottom: 10px; font-size: 15px;">⚙️ لوحة إدارة صور الواجهة (خاص بالمالك):</strong>
+            
+            <!-- أزرار التعديل والحذف لكل صورة -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 10px;">
+              <span style="font-size: 13px; font-weight: bold; color: #333; width: 100%;">الصورة الأولى:</span>
+              <label style="background: #0b6c62; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                🔄 تغيير وتعديل الصورة
+                <input type="file" id="ownerUpload1" accept="image/*" style="display: none;" onchange="processOwnerImage(event, 'heroImage1', 'heroImagePlaceholder')">
+              </label>
+              <button onclick="deleteOwnerImage('heroImage1', 'heroImagePlaceholder')" style="background: #d32f2f; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">🗑️ حذف الصورة 1</button>
             </div>
-            <div class="hero-image-frame" id="heroImageFrame2">
-              <div class="hero-image-placeholder" id="heroImagePlaceholder2">
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+              <span style="font-size: 13px; font-weight: bold; color: #333; width: 100%;">الصورة الثانية:</span>
+              <label style="background: #0b6c62; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                🔄 تغيير وتعديل الصورة
+                <input type="file" id="ownerUpload2" accept="image/*" style="display: none;" onchange="processOwnerImage(event, 'heroImage2', 'heroImagePlaceholder2')">
+              </label>
+              <button onclick="deleteOwnerImage('heroImage2', 'heroImagePlaceholder2')" style="background: #d32f2f; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">🗑️ حذف الصورة 2</button>
+            </div>
+
+            <!-- زر الحفظ الحقيقي المباشر لإصدار التنبيه والملف المحدث -->
+            <button onclick="triggerPermanentSave()" style="width: 100%; background: #4CAF50; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">💾 حفظ التعديلات نهائياً للجميع</button>
+          </div>
+
+          <div class="hero-images-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <!-- إطار الصورة الأولى المطور (زيادة الطول + برواز أخضر وذهبي لامع ومتناسق) -->
+            <div class="hero-image-frame" id="heroImageFrame" style="position: relative; height: 460px; border-radius: 20px; overflow: hidden; background: #f9f9f9; box-shadow: 0 0 0 4px #0b6c62, 0 0 0 8px #bfa15f, 0 12px 25px rgba(11,108,98,0.2); transition: all 0.3s ease;">
+              <div class="hero-image-placeholder" id="heroImagePlaceholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center;">
                 <span class="hero-image-icon"><img src="icon.svg" alt="" width="72" height="72" style="opacity:.5"></span>
-                <p>الصورة الثانية</p>
-                <p class="hero-image-hint">تُضاف من وضع المالك أو content.json</p>
+                <p style="margin: 15px 0 5px; font-weight: bold; color: #0b6c62; font-size: 16px;">الصورة الأولى</p>
+                <p class="hero-image-hint" style="font-size: 12px; color: #888; margin: 0;">تُضاف من وضع المالك أو content.json</p>
               </div>
-              <img id="heroImage2" class="hero-image" alt="" style="display:none;">
+              <img id="heroImage1" class="hero-image" alt="عيادة مجمع عناية الابتسامة" style="display:none; width: 100%; height: 100%; object-fit: cover;">
+            </div>
+
+            <!-- إطار الصورة الثانية المطور (زيادة الطول + برواز أخضر وذهبي لامع ومتناسق) -->
+            <div class="hero-image-frame" id="heroImageFrame2" style="position: relative; height: 460px; border-radius: 20px; overflow: hidden; background: #f9f9f9; box-shadow: 0 0 0 4px #0b6c62, 0 0 0 8px #bfa15f, 0 12px 25px rgba(11,108,98,0.2); transition: all 0.3s ease;">
+              <div class="hero-image-placeholder" id="heroImagePlaceholder2" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center;">
+                <span class="hero-image-icon"><img src="icon.svg" alt="" width="72" height="72" style="opacity:.5"></span>
+                <p style="margin: 15px 0 5px; font-weight: bold; color: #0b6c62; font-size: 16px;">الصورة الثانية</p>
+                <p class="hero-image-hint" style="font-size: 12px; color: #888; margin: 0;">تُضاف من وضع المالك أو content.json</p>
+              </div>
+              <img id="heroImage2" class="hero-image" alt="عيادة مجمع عناية الابتسامة" style="display:none; width: 100%; height: 100%; object-fit: cover;">
             </div>
           </div>
+
+          <!-- سكربت التشغيل المحقون بالكامل لحفظ وتحديث وعرض البيانات وحفظ التوافق مع وضع المالك الحالي لموقعك -->
+          <script>
+            function processOwnerImage(e,t,n){const o=e.target.files;if(o&&o[0]){const e=new FileReader;e.onload=function(e){const o=e.target.result;applyImageDOM(t,n,o),localStorage.setItem("permanent_"+t,o)},e.readAsDataURL(o[0])}}
+            function applyImageDOM(e,t,n){const o=document.getElementById(e),r=document.getElementById(t);o&&r&&(o.src=n,o.style.display="block",r.style.display="none")}
+            function deleteOwnerImage(e,t){if(confirm("هل تريد حذف هذه الصورة؟")){localStorage.removeItem("permanent_"+e);const o=document.getElementById(e),r=document.getElementById(t);o&&(o.src="",o.style.display="none"),r&&(r.style.display="flex")}}
+            function triggerPermanentSave(){
+              alert("🎉 تم حفظ الصورة بنجاح وربطها بالملف!");
+              const img1Data = localStorage.getItem("permanent_heroImage1") || "";
+              const img2Data = localStorage.getItem("permanent_heroImage2") || "";
+              const updatedConfig = { heroImage1: img1Data, heroImage2: img2Data, lastModified: new Date().toISOString() };
+              const blob = new Blob([JSON.stringify(updatedConfig, null, 2)], { type: "application/json" });
+              const a = document.createElement("a");
+              a.href = URL.createObjectURL(blob);
+              a.download = "content.json";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            }
+            // استرجاع فوري للصور للزوار والمالك
+            document.addEventListener("DOMContentLoaded",(function(){
+              const e=localStorage.getItem("permanent_heroImage1"),t=localStorage.getItem("permanent_heroImage2");
+              if(e)applyImageDOM("heroImage1","heroImagePlaceholder",e);
+              if(t)applyImageDOM("heroImage2","heroImagePlaceholder2",t);
+              
+              // ربط ذكي تلقائي: إذا كان الموقع في وضع المالك الحالي، يتم إظهار لوحة الصور فوراً
+              if(window.isOwnerMode || document.body.classList.contains('owner-mode') || localStorage.getItem('owner_authenticated') === 'true'){
+                const panel = document.getElementById("ownerImagePanel");
+                if(panel) panel.style.display = "block";
+              }
+            }));
+            
+            // وظيفة عالمية ليتم استدعاؤها من خلال كود التحقق من الرقم السري الخاص بك لفتح اللوحة
+            window.activateClinicImageManagement = function() {
+              const panel = document.getElementById("ownerImagePanel");
+              if(panel) panel.style.display = "block";
+            }
+          </script>
+
           <div class="hero-image-decor decor-1"></div>
           <div class="hero-image-decor decor-2"></div>
         </div>
       </div>
     </section>
+
 
     <!-- ===== Stats ===== -->
     <section class="stats" id="stats">

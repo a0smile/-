@@ -39,6 +39,12 @@ async function enterAdminMode() {
   if (tb) tb.hidden = false;
   attachEditButtons();
   if (typeof renderCatalog === 'function') renderCatalog();
+  
+  // 👇 ربط حقيقي: إظهار لوحة التحكم بالصور فوراً عند إدخال الرقم السري الصحيح
+  if (typeof window.activateClinicImageManagement === 'function') {
+    window.activateClinicImageManagement();
+  }
+
   notifyAdminChanged();
 }
 
@@ -56,6 +62,7 @@ function exitAdminMode() {
 function notifyAdminChanged() {
   document.dispatchEvent(new CustomEvent('adminModeChanged'));
 }
+
 
 function attachEditButtons() {
   removeEditButtons();
